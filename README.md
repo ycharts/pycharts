@@ -7,4 +7,4 @@ Python client for the YCharts API.
 # Examples
 # Documentation and Support
 
-Full api documentation can be found at[http://www.ycharts.com/api][docs].
+Full api documentation can be found at[http://www.ycharts.com/api].
