@@ -10,6 +10,7 @@ except ImportError:
     from urllib import urlencode
     from urllib2 import HTTPError, Request, urlopen
 
+
 class BaseSecurityClient(object):
     """
     Base Class for all security api clients
