@@ -1,10 +1,18 @@
 import json
-from urllib import error, parse, request
-from pycharts import errors
+from pycharts import exceptions
+try:
+    # Python 3
+    from urllib.parse import urlencode
+    from urllib.error import HTTPError
+    from urllib.request import Request, urlopen
+except ImportError:
+    # Python2
+    from urllib import urlencode
+    from urllib2 import HTTPError, Request, urlopen
 
 class BaseSecurityClient(object):
     """
-    Abstract Base Class for all security api clients
+    Base Class for all security api clients
     that provides shared functionality and enforces
     a common interface.
     """
@@ -96,36 +104,35 @@ class BaseSecurityClient(object):
     def _get_data(self, url_path, params=None):
         url = '{0}/{1}/{2}'.format(self.BASE_URL, self.API_VERSION, url_path)
         if params:
-            encoded_params = parse.urlencode(params)
+            encoded_params = urlencode(params)
             url = '{0}?{1}'.format(url, encoded_params)
 
-        req = request.Request(url, headers=self.header)
+        req = Request(url, headers=self.header)
         response = self._parse_response(req)
         
         return response
 
     def _parse_response(self, req):
-        parsed_rsp = None
         try:
-            response = request.urlopen(req).read().decode('utf-8')
-            parsed_rsp = json.loads(response)
-
-            # raise any payload level errors
-            if parsed_rsp['meta']['status'] == 'error':
-                error_code = parsed_rsp['meta']['error_code']
-                error_message = parsed_rsp['meta']['error_message']
-                if error_code == 400:
-                    raise errors.PyChartsRequestError(error_message=error_message)
-                elif error_code == 414:
-                    raise errors.PyChartsRequestTooLongError(error_message=error_message)
-        except error.HTTPError as http_error:
+            response = urlopen(req).read().decode('utf-8')
+        except HTTPError as http_error:
             if http_error.code == 404:
-                raise errors.PyChartsRequestUrlNotFoundError()
+                raise exceptions.PyChartsRequestUrlNotFoundException()
             elif http_error.code == 401:
-                raise errors.PyChartsRequestUnauthorizedError()
+                raise exceptions.PyChartsRequestUnauthorizedException()
+
+        parsed_rsp = json.loads(response)
+
+        # raise any payload level errors
+        if parsed_rsp['meta']['status'] == 'error':
+            error_code = parsed_rsp['meta']['error_code']
+            error_message = parsed_rsp['meta']['error_message']
+            if error_code == 400:
+                raise exceptions.PyChartsRequestException(error_message=error_message)
+            elif error_code == 414:
+                raise exceptions.PyChartsRequestTooLongException(error_message=error_message)
 
         return parsed_rsp
-
     
     def _build_url_path(self, security_type_path, security_symbols, query_type_path, query_keys=None):
         security_symbol_params = self._format_list_for_url(security_symbols)
