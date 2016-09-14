@@ -1,3 +1,4 @@
+import datetime
 import json
 from pycharts import exceptions
 try:
@@ -36,7 +37,9 @@ class BaseSecurityClient(object):
         Args:
             security_symbols (list): List of string symbols
             calculation_codes (list): List og string calculation codes
-            query_date (datetime): date on or before which the endpoint will query data for.
+            query_date
+                (datetime): datetime object on or before which the endpoint will query data for.
+                (int): Negative integer representing relative periods(as it relates to each calc code) in the past.
 
         Returns:
             dict of the decoded json from server response.
@@ -44,11 +47,11 @@ class BaseSecurityClient(object):
         Notes:
             The max length of any list arg is 100
         """
-        url_path = self._build_url_path(self.SECURITY_TYPE_PATH, security_symbols,
+        url_path = self._build_url_path(security_symbols,
             'points', calculation_codes)
 
         if query_date:
-            params = {'date': self._format_datetime_for_url(query_date)}
+            params = {'date': self._format_query_date_for_url(query_date)}
         else:
             params = None
 
@@ -61,8 +64,12 @@ class BaseSecurityClient(object):
         Args:
             security_symbols (list): List of string symbols
             calculation_codes (list): List og string calculation codes
-            query_start_date (datetime): date after which the endpoint will query data for.
-            query_end_date (datetime): date on or before which the endpoint will query data for. 
+            query_start_date
+                (datetime): date after which the endpoint will query data for.
+                (int): Negative integer representing relative periods(as it relates to each calc code) in the past.
+            query_end_date
+                (datetime): date on or before which the endpoint will query data for. 
+                (int): Negative integer representing relative periods(as it relates to each calc code) in the past.
 
         Returns:
             dict of the decoded json from server response.
@@ -70,14 +77,14 @@ class BaseSecurityClient(object):
         Notes:
             The max length of any list arg is 100
         """
-        url_path = self._build_url_path(self.SECURITY_TYPE_PATH, security_symbols, 
+        url_path = self._build_url_path(security_symbols, 
             'series', calculation_codes)
 
         params = {}
         if query_start_date:
-            params['start_date'] = self._format_datetime_for_url(query_start_date)
+            params['start_date'] = self._format_query_date_for_url(query_start_date)
         if query_end_date:
-            params['end_date'] = self._format_datetime_for_url(query_end_date)
+            params['end_date'] = self._format_query_date_for_url(query_end_date)
 
         return self._get_data(url_path, params)  
 
@@ -96,7 +103,7 @@ class BaseSecurityClient(object):
             The max length of any list arg is 100
 
         """
-        url_path = self._build_url_path(self.SECURITY_TYPE_PATH, security_symbols,
+        url_path = self._build_url_path(security_symbols,
             'info', info_field_codes)
 
         return self._get_data(url_path, None)
@@ -135,10 +142,10 @@ class BaseSecurityClient(object):
 
         return parsed_rsp
     
-    def _build_url_path(self, security_type_path, security_symbols, query_type_path, query_keys=None):
+    def _build_url_path(self, security_symbols, query_type_path, query_keys=None):
         security_symbol_params = self._format_list_for_url(security_symbols)
 
-        url_path = '{0}/{1}/{2}'.format(security_type_path, security_symbol_params, query_type_path)
+        url_path = '{0}/{1}/{2}'.format(self.SECURITY_TYPE_PATH, security_symbol_params, query_type_path)
 
         if query_keys:
             query_key_params = self._format_list_for_url(query_keys)
@@ -146,8 +153,14 @@ class BaseSecurityClient(object):
         
         return url_path
 
-    def _format_datetime_for_url(self, datetime_param):
-        return datetime_param.isoformat().split('T')[0]
+    def _format_query_date_for_url(self, query_date):
+        if isinstance(query_date, datetime.datetime):
+            return datetime_param.isoformat().split('T')[0]
+        elif isinstance(query_date, int) and query_date < 0:
+            return query_date
+        else:
+            error_message = 'Invalid Date paramter. Date should be a datetime object or a negative integer.'
+            raise exceptions.PyChartsRequestException(error_message=error_message)
 
     def _format_list_for_url(self, list_param):
         return ','.join(list_param)
