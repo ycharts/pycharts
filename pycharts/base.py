@@ -155,7 +155,7 @@ class BaseSecurityClient(object):
 
     def _format_query_date_for_url(self, query_date):
         if isinstance(query_date, datetime.datetime):
-            return datetime_param.isoformat().split('T')[0]
+            return query_date.isoformat().split('T')[0]
         elif isinstance(query_date, int) and query_date < 0:
             return query_date
         else:
