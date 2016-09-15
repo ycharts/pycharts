@@ -41,7 +41,7 @@ previous_point_rsp = company_client.get_points(['MSFT'], ['price'], query_date=-
 now = datetime.datetime.now()
 past = now - datetime.timedelta(days=100)
 series_rsp = company_client.get_series(['AAPL', 'MSFT'], ['price'],
-	query_start_date=past , query_end_date=now)
+    query_start_date=past , query_end_date=now)
 
 # INFO QUERIES
 
@@ -50,9 +50,9 @@ info_rsp = company_client.get_info(['AAPL'], ['description'])
 # EXCEPTION EXAMPLE
 
 try:
-	bad_point_rsp = company_client.get_points(['AAPL'], ['price'], query_date=45)
+    bad_point_rsp = company_client.get_points(['AAPL'], ['price'], query_date=45)
 except exceptions.PyChartsRequestException as pycharts_error:
-	print(pycharts_error.error_message)
+    print(pycharts_error.error_message)
 
 ```
 
