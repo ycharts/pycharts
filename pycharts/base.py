@@ -130,7 +130,6 @@ class BaseSecurityClient(object):
                 raise exceptions.PyChartsRequestUnauthorizedException()
 
         parsed_rsp = json.loads(response)
-
         # raise any payload level errors
         if parsed_rsp['meta']['status'] == 'error':
             error_code = parsed_rsp['meta']['error_code']
