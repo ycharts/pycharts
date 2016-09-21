@@ -58,6 +58,6 @@ except exceptions.PyChartsRequestException as pycharts_error:
 
 # Documentation and Support
 
-Full API documentation can be found at https://www.ycharts.com/api/docs.
+Full API documentation can be found at https://www.ycharts.com/api/docs/.
 
 For questions and information about API access, visit https://ycharts.com/api for more info.
