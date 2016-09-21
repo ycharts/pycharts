@@ -33,8 +33,8 @@ company_client = CompanyClient(ycharts_api_key)
 # queries the latest price values for AAPL and MSFT
 point_rsp = company_client.get_points(['AAPL', 'MSFT'], ['price'])
 
-# queries the price values for AAPL and MSFT 21  days ago
-previous_point_rsp = company_client.get_points(['MSFT'], ['price'], query_date=-21)
+# queries the price values for AAPL 21 days ago
+previous_point_rsp = company_client.get_points('AAPL', 'price', query_date=-21)
 
 # SERIES QUERIES
 

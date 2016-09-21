@@ -47,6 +47,9 @@ class BaseSecurityClient(object):
         Notes:
             The max length of any list arg is 100
         """
+        security_symbols = self._str_or_list(security_symbols)
+        calculation_codes = self._str_or_list(calculation_codes)
+
         url_path = self._build_url_path(security_symbols,
             'points', calculation_codes)
 
@@ -77,6 +80,9 @@ class BaseSecurityClient(object):
         Notes:
             The max length of any list arg is 100
         """
+        security_symbols = self._str_or_list(security_symbols)
+        calculation_codes = self._str_or_list(calculation_codes)
+
         url_path = self._build_url_path(security_symbols, 
             'series', calculation_codes)
 
@@ -103,6 +109,9 @@ class BaseSecurityClient(object):
             The max length of any list arg is 100
 
         """
+        security_symbols = self._str_or_list(security_symbols)
+        info_field_codes = self._str_or_list(info_field_codes)
+
         url_path = self._build_url_path(security_symbols,
             'info', info_field_codes)
 
@@ -163,3 +172,8 @@ class BaseSecurityClient(object):
 
     def _format_list_for_url(self, list_param):
         return ','.join(list_param)
+
+    def _str_or_list(self, arg):
+        if not isinstance(arg, (list, tuple)):
+            arg = [arg]
+        return arg
