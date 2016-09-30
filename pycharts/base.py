@@ -22,6 +22,7 @@ class BaseSecurityClient(object):
     API_VERSION = 'v3'
     BASE_URL = 'https://ycharts.com/api'
     SECURITY_TYPE_PATH = None
+    VALID_SECURITY_FILTERS = None
 
     def __init__(self, api_key):
         """
@@ -29,6 +30,27 @@ class BaseSecurityClient(object):
             api_key (str): The API key that authorizes a client to query security data
         """
         self.header = {'X-YCHARTSAUTHORIZATION': api_key}
+
+    def get_securities(self, page=1, **filter_param):
+        """
+        Queries /<security_type> endpoint to return a paged
+        list of securities.
+        """
+        url_path = self._build_url_path(None, None)
+        params = {'page': page}
+        # the endpoints respond just fine to invaliid query params,
+        # they just ignore them, but the the real value of the endpoints
+        # is only revealed when using the filters, so let's not waste
+        # requests on filters that don't do anything.
+        if filter_param:
+            query_filter = filter_param.popitem()
+            if query_filter[0] in self.VALID_SECURITY_FILTERS:
+                params[query_filter[0]] = query_filter[1]
+            else:
+                error_msg = 'Invalid filter param. Must be one of: {0}'.format(','.join(self.VALID_SECURITY_FILTERS))
+                raise exceptions.PyChartsRequestException(error_msg)
+
+        return self._get_data(url_path, params)
 
     def get_points(self, security_symbols, calculation_codes, query_date=None):
         """
@@ -151,9 +173,12 @@ class BaseSecurityClient(object):
         return parsed_rsp
     
     def _build_url_path(self, security_symbols, query_type_path, query_keys=None):
-        security_symbol_params = self._format_list_for_url(security_symbols)
 
-        url_path = '{0}/{1}/{2}'.format(self.SECURITY_TYPE_PATH, security_symbol_params, query_type_path)
+        url_path = self.SECURITY_TYPE_PATH
+
+        if security_symbols and query_type_path:
+            security_symbol_params = self._format_list_for_url(security_symbols)
+            url_path = '{0}/{1}/{2}'.format(url_path, security_symbol_params, query_type_path)
 
         if query_keys:
             query_key_params = self._format_list_for_url(query_keys)

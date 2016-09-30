@@ -28,6 +28,12 @@ from pycharts import exceptions
 ycharts_api_key = 'sample-api-key'
 company_client = CompanyClient(ycharts_api_key)
 
+# DISCOVER SECURITIES QUERIES
+
+# gets a paginated list of companies, for a full list of
+# supported filters, see our api docs.
+companies = company_client.get_securities(exchange='NYSE')
+
 # POINT QUERIES
 
 # queries the latest price values for AAPL and MSFT

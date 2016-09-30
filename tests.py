@@ -68,6 +68,17 @@ class MockHttpResponse(object):
                 'error_code': 414,
                 'url': 'http://ycharts.com/api/v3/companies/TOOMANY/info/name',
             },
+        },
+        'https://ycharts.com/api/v3/companies?page=1': {
+            'response': [{'name': 'Apple', 'symbol': 'AAPL'}, {'name': 'Microsoft', 'symbol': 'MSFT'}],
+            'meta': {
+                'status': 'ok', 
+                'url': 'https://ycharts.com/api/v3/companies?page=1', 
+                'pagination_info': {
+                    'end_index': 2, 'num_items': 2, 'start_index': 1, 
+                    'num_pages': 1, 'current_page_num': 1
+                }
+            }
         }
     }
 
@@ -158,6 +169,31 @@ class ClientTestCase(TestCase):
             self.client.get_info(['TOOMANY'], ['name'])
 
         self.assertEqual(cm.exception.error_code, 414)
+
+    @mock.patch('pycharts.base.urlopen', mock_urlopen)
+    def test_successful_securities_request(self):
+        securities_rsp = self.client.get_securities()
+        meta = securities_rsp['meta']
+        securities = securities_rsp['response']
+        for security in securities:
+            self.assertTrue(security['symbol'] in ['AAPL', 'MSFT'])
+            self.assertTrue(security['name'] in ['Apple', 'Microsoft'])
+
+        status = securities_rsp['meta']['status']
+        self.assertEqual(status, 'ok')
+        # test pagination info in the response
+        pagination_info = meta['pagination_info']
+        self.assertEqual(pagination_info['num_items'], 2)
+        self.assertEqual(pagination_info['start_index'], 1)
+        self.assertEqual(pagination_info['end_index'], 2)
+        self.assertEqual(pagination_info['num_pages'], 1)
+        self.assertEqual(pagination_info['current_page_num'], 1)
+
+    def test_400_bad_filter_securities_request(self):
+        with self.assertRaises(exceptions.PyChartsRequestException) as cm:
+            self.client.get_securities(bad_filter='bad_value')
+
+        self.assertEqual(cm.exception.error_code, 400)                
 
 
 if __name__ == '__main__':
