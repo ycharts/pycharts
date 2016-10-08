@@ -30,7 +30,7 @@ company_client = CompanyClient(ycharts_api_key)
 
 # DISCOVER SECURITIES QUERIES
 
-# gets a paginated list of companies, for a full list of
+# gets a paginated list of companies. For a full list of
 # supported filters, see our api docs.
 companies = company_client.get_securities(exchange='NYSE')
 

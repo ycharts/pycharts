@@ -4,22 +4,22 @@ from pycharts.base import BaseSecurityClient
 class CompanyClient(BaseSecurityClient):
     
     SECURITY_TYPE_PATH = 'companies'
-    VALID_SECURITY_FILTERS = ['exchange', 'benchmark_index', 'sector', 'industry',
-    	'naics_sector', 'naics_industry', 'hq_region', 'incorporation_region']
+    VALID_SECURITY_FILTERS = ['benchmark_index', 'exchange', 'hq_region', 'incorporation_region',
+    	'industry', 'naics_industry', 'naics_sector', 'sector']
 
 
 class MutualFundClient(BaseSecurityClient):
     
     SECURITY_TYPE_PATH = 'mutual_funds'
-    VALID_SECURITY_FILTERS = ['fund_style', 'broad_asset_class', 'broad_category', 'category',
-    	'prospectus_objective', 'domicile', 'benchmark_index', 'fund_manager', 'fund_family',
-    	'brokerage_availability', 'attribute', 'legal_structure', 'share_class']
+    VALID_SECURITY_FILTERS = ['attribute', 'benchmark_index', 'broad_asset_class', 'broad_category',
+    	'category', 'domicile', 'fund_manager', 'fund_family', 'fund_style', 'legal_structure',
+    	'prospectus_objective', 'share_class']
 
 
 class IndicatorClient(BaseSecurityClient):
     
     SECURITY_TYPE_PATH = 'indicators'
-    VALID_SECURITY_FILTERS = ['region', 'category', 'source', 'report']
+    VALID_SECURITY_FILTERS = ['category', 'region', 'report', 'source']
 
     def get_points(self, security_symbols, query_date=None):
         return super(IndicatorClient, self).get_points(security_symbols, None, query_date)
