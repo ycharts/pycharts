@@ -1,10 +1,10 @@
 # pycharts
-Python client for the YCharts API.
+Python client for the YCharts Market Data API.
 
 # Requirements
 
 * Python (2.7, 3.0, 3.2, 3.3, 3.4, 3.5)
-* Valid API key from YCharts Support.
+* Valid API key from YCharts.
 
 # Installation
 
@@ -64,6 +64,6 @@ except exceptions.PyChartsRequestException as pycharts_error:
 
 # Documentation and Support
 
-Full api documentation can be found at https://www.ycharts.com/api.
+Full API documentation can be found at https://www.ycharts.com/api/docs/.
 
-For questions and information about api access, visit https://ycharts.com/support for more info.
+For questions and information about API access, visit https://ycharts.com/api for more info.
