@@ -79,6 +79,31 @@ class MockHttpResponse(object):
                     'num_pages': 1, 'current_page_num': 1
                 }
             }
+        },
+        'https://ycharts.com/api/v3/companies/AAPL/dividends?start_date=2015-01-01': {
+            'meta': {
+                'status': 'ok',
+                'url': 'http://ycharts.com/api/v3/companies/AAPL/dividends?start_date=2015-01-01'
+            },
+            'response': {
+                'AAPL': {
+                    'meta': {
+                        'status': 'ok'
+                    },
+                    'results': [
+                        {
+                            'adjusted_dividend_amount': 0.47,
+                            'currency_code': 'USD',
+                            'declared_date': '2015-01-27',
+                            'dividend_amount': 0.47,
+                            'dividend_type': 'normal',
+                            'execution_date': '2015-02-05',
+                            'pay_date': '2015-02-12',
+                            'record_date': '2015-02-09'
+                        }
+                    ]
+                }
+            }
         }
     }
 
@@ -193,7 +218,25 @@ class ClientTestCase(TestCase):
         with self.assertRaises(exceptions.PyChartsRequestException) as cm:
             self.client.get_securities(bad_filter='bad_value')
 
-        self.assertEqual(cm.exception.error_code, 400)                
+        self.assertEqual(cm.exception.error_code, 400)
+
+    @mock.patch('pycharts.base.urlopen', mock_urlopen)
+    def test_successful_dividend_request(self):
+        start_date = datetime.datetime(2015, 1, 1)
+        dividend_rsp = self.client.get_dividends('AAPL', execution_start_date=start_date)
+        status = dividend_rsp['meta']['status']
+        dividend_data = dividend_rsp['response']['AAPL']['results']
+        # assertions
+        self.assertEqual(status, 'ok')
+        self.assertEqual(len(dividend_data), 1)
+        self.assertEqual(dividend_data[0]['adjusted_dividend_amount'],  0.47)
+        self.assertEqual(dividend_data[0]['currency_code'], 'USD')
+        self.assertEqual(dividend_data[0]['declared_date'], '2015-01-27')
+        self.assertEqual(dividend_data[0]['dividend_amount'], 0.47)
+        self.assertEqual(dividend_data[0]['dividend_type'], 'normal')
+        self.assertEqual(dividend_data[0]['execution_date'], '2015-02-05')
+        self.assertEqual(dividend_data[0]['pay_date'], '2015-02-12')
+        self.assertEqual(dividend_data[0]['record_date'], '2015-02-09')
 
 
 if __name__ == '__main__':

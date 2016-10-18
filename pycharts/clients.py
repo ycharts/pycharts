@@ -7,6 +7,21 @@ class CompanyClient(BaseSecurityClient):
     VALID_SECURITY_FILTERS = ['benchmark_index', 'exchange', 'hq_region', 'incorporation_region',
     	'industry', 'naics_industry', 'naics_sector', 'sector']
 
+    def get_dividends(self, security_symbols, execution_start_date=None, execution_end_date=None, dividend_type=None):
+        security_symbols = self._str_or_list(security_symbols)
+
+        url_path = self._build_url_path(security_symbols, 'dividends')
+
+        params = {}
+        if execution_start_date:
+            params['start_date'] = self._format_query_date_for_url(execution_start_date)
+        if execution_end_date:
+            params['end_date'] = self._format_query_date_for_url(execution_end_date)
+        if dividend_type:
+            params['dividend_type'] = dividend_type
+
+        return self._get_data(url_path, params)  
+
 
 class MutualFundClient(BaseSecurityClient):
     
@@ -14,6 +29,21 @@ class MutualFundClient(BaseSecurityClient):
     VALID_SECURITY_FILTERS = ['attribute', 'benchmark_index', 'broad_asset_class', 'broad_category',
     	'category', 'domicile', 'fund_manager', 'fund_family', 'fund_style', 'legal_structure',
     	'prospectus_objective', 'share_class']
+
+    def get_dividends(self, security_symbols, execution_start_date=None, execution_end_date=None, dividend_type=None):
+        security_symbols = self._str_or_list(security_symbols)
+
+        url_path = self._build_url_path(security_symbols, 'dividends')
+
+        params = {}
+        if execution_start_date:
+            params['start_date'] = self._format_query_date_for_url(execution_start_date)
+        if execution_end_date:
+            params['end_date'] = self._format_query_date_for_url(execution_end_date)
+        if dividend_type:
+            params['dividend_type'] = dividend_type
+
+        return self._get_data(url_path, params)  
 
 
 class IndicatorClient(BaseSecurityClient):
