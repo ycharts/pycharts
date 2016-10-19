@@ -53,6 +53,17 @@ series_rsp = company_client.get_series(['AAPL', 'MSFT'], ['price'],
 
 info_rsp = company_client.get_info(['AAPL'], ['description'])
 
+# DIVIDEND QUERIES
+
+start_date = datetime.datetime(2015, 1, 1)
+dividend_rsp = company_client.get_dividends(['AAPL'], execution_start_date=start_date, dividend_type='special')
+
+# STOCK SPLITS AND SPINOFFS QUERIES
+
+split_spinoff_end_date = datetime.datetime(2014, 1, 1)
+split_rsp = company_client.get_stock_splits(['AAPL'], split_end_date=split_spinoff_end_date)
+spinoff_rsp = company_client.get_stock_spinoffs(['AAPL'], spinoff_end_date=split_spinoff_end_date)
+
 # EXCEPTION EXAMPLE
 
 try:
