@@ -104,6 +104,49 @@ class MockHttpResponse(object):
                     ]
                 }
             }
+        },
+        'https://ycharts.com/api/v3/companies/AAPL/splits?end_date=2014-01-01': {
+            'meta': {
+                'status': 'ok',
+                'url': 'https://ycharts.com/api/v3/companies/AAPL/splits?end_date=2014-01-01'
+            },
+            'response': {
+                'AAPL': {
+                    'meta': {
+                        'status': 'ok'
+                    },
+                    'results': [
+                        {
+                            'day': '1987-06-16',
+                            'is_stock_dividend': 'false',
+                            'ratio': 2.0,
+                            'status': 'executed'
+                        }
+                    ]
+                }
+            }
+        },
+        'https://ycharts.com/api/v3/companies/GGP/spinoffs?end_date=2014-01-01': {
+            'meta': {
+                'status': 'ok',
+                'url': 'https://ycharts.com/api/v3/companies/GGP/spinoffs?end_date=2014-01-01'
+            },
+            'response': {
+                'GGP': {
+                    'meta': {
+                        'status': 'ok'
+                    },
+                    'results': [
+                        {
+                            'child_company_exchange': 'null',
+                            'child_company_symbol': 'NYU',
+                            'day': '2010-11-10',
+                            'ratio': 1.259958,
+                            'status': 'executed'
+                        }
+                    ]
+                }
+            }
         }
     }
 
@@ -237,6 +280,35 @@ class ClientTestCase(TestCase):
         self.assertEqual(dividend_data[0]['ex_date'], '2015-02-05')
         self.assertEqual(dividend_data[0]['pay_date'], '2015-02-12')
         self.assertEqual(dividend_data[0]['record_date'], '2015-02-09')
+
+    @mock.patch('pycharts.base.urlopen', mock_urlopen)
+    def test_successful_stock_split_request(self):
+        end_date = datetime.datetime(2014, 1, 1)
+        split_rsp = self.client.get_stock_splits('AAPL', split_end_date=end_date)
+        status = split_rsp['meta']['status']
+        split_data = split_rsp['response']['AAPL']['results']
+        # assertions
+        self.assertEqual(status, 'ok')
+        self.assertEqual(len(split_data), 1)
+        self.assertEqual(split_data[0]['day'],  '1987-06-16')
+        self.assertEqual(split_data[0]['is_stock_dividend'],  'false')
+        self.assertEqual(split_data[0]['ratio'],  2.0)
+        self.assertEqual(split_data[0]['status'],  'executed')
+
+    @mock.patch('pycharts.base.urlopen', mock_urlopen)
+    def test_successful_stock_spinoff_request(self):
+        end_date = datetime.datetime(2014, 1, 1)
+        spinoff_rsp = self.client.get_stock_spinoffs('GGP', spinoff_end_date=end_date)
+        status = spinoff_rsp['meta']['status']
+        spinoff_data = spinoff_rsp['response']['GGP']['results']
+        # assertions
+        self.assertEqual(status, 'ok')
+        self.assertEqual(len(spinoff_data), 1)
+        self.assertEqual(spinoff_data[0]['day'],  '2010-11-10')
+        self.assertEqual(spinoff_data[0]['child_company_symbol'],  'NYU')
+        self.assertEqual(spinoff_data[0]['child_company_exchange'],  'null')
+        self.assertEqual(spinoff_data[0]['status'],  'executed')
+        self.assertEqual(spinoff_data[0]['ratio'],  1.259958)
 
 
 if __name__ == '__main__':
