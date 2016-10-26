@@ -97,7 +97,7 @@ class MockHttpResponse(object):
                             'declared_date': '2015-01-27',
                             'dividend_amount': 0.47,
                             'dividend_type': 'normal',
-                            'execution_date': '2015-02-05',
+                            'ex_date': '2015-02-05',
                             'pay_date': '2015-02-12',
                             'record_date': '2015-02-09'
                         }
@@ -223,7 +223,7 @@ class ClientTestCase(TestCase):
     @mock.patch('pycharts.base.urlopen', mock_urlopen)
     def test_successful_dividend_request(self):
         start_date = datetime.datetime(2015, 1, 1)
-        dividend_rsp = self.client.get_dividends('AAPL', execution_start_date=start_date)
+        dividend_rsp = self.client.get_dividends('AAPL', ex_start_date=start_date)
         status = dividend_rsp['meta']['status']
         dividend_data = dividend_rsp['response']['AAPL']['results']
         # assertions
@@ -234,7 +234,7 @@ class ClientTestCase(TestCase):
         self.assertEqual(dividend_data[0]['declared_date'], '2015-01-27')
         self.assertEqual(dividend_data[0]['dividend_amount'], 0.47)
         self.assertEqual(dividend_data[0]['dividend_type'], 'normal')
-        self.assertEqual(dividend_data[0]['execution_date'], '2015-02-05')
+        self.assertEqual(dividend_data[0]['ex_date'], '2015-02-05')
         self.assertEqual(dividend_data[0]['pay_date'], '2015-02-12')
         self.assertEqual(dividend_data[0]['record_date'], '2015-02-09')
 
