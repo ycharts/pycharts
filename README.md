@@ -56,7 +56,7 @@ info_rsp = company_client.get_info(['AAPL'], ['description'])
 # DIVIDEND QUERIES
 
 start_date = datetime.datetime(2015, 1, 1)
-dividend_rsp = company_client.get_dividends(['AAPL'], execution_start_date=start_date, dividend_type='special')
+dividend_rsp = company_client.get_dividends(['AAPL'], ex_start_date=start_date, dividend_type='special')
 
 # STOCK SPLITS AND SPINOFFS QUERIES
 
