@@ -12,6 +12,8 @@ Install from github using `pip`.
 
 ```
 pip install git+https://github.com/ycharts/pycharts.git
+# or
+pip install pycharts
 ```
 # Documentation and Support
 
