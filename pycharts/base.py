@@ -199,6 +199,6 @@ class BaseSecurityClient(object):
         return ','.join(list_param)
 
     def _str_or_list(self, arg):
-        if not isinstance(arg, (list, tuple)):
+        if not isinstance(arg, (list, tuple)) and arg is not None:
             arg = [arg]
         return arg
