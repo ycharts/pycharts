@@ -82,7 +82,8 @@ class BaseSecurityClient(object):
 
         return self._get_data(url_path, params)
 
-    def get_series(self, security_symbols, calculation_codes, query_start_date=None, query_end_date=None):
+    def get_series(self, security_symbols, calculation_codes, query_start_date=None, query_end_date=None,
+        resample_frequency=None, resample_function=None, fill_method=None, aggregate_function=None):
         """
         Queries data from a /<security_type>/series endpoint.
 
@@ -113,6 +114,14 @@ class BaseSecurityClient(object):
             params['start_date'] = self._format_query_date_for_url(query_start_date)
         if query_end_date:
             params['end_date'] = self._format_query_date_for_url(query_end_date)
+        if resample_frequency:
+            params['resample_frequency'] = resample_frequency
+        if resample_function:
+            params['resample_function'] = resample_function
+        if fill_method:
+            params['fill_method'] = fill_method
+        if aggregate_function:
+            params['aggregate_function'] = aggregate_function
 
         return self._get_data(url_path, params)  
 
