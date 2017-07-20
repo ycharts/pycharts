@@ -147,6 +147,20 @@ class MockHttpResponse(object):
                     ]
                 }
             }
+        },
+        'https://ycharts.com/api/v3/companies/AAPL/series/price?aggregate_function=max': {
+            'response': {
+                'AAPL': {
+                    'results': {
+                        'price': {
+                            'data': [['2016-09-12', 99999.00]],
+                            'meta': {'status': 'ok'},
+                        },
+                    },
+                    'meta': {'status': 'ok'},
+                },
+            },
+            'meta': {'url': 'http://ycharts.com/api/v3/companies/AAPL/series/price?aggregate_function=max', 'status': 'ok'},
         }
     }
 
@@ -310,6 +324,21 @@ class ClientTestCase(TestCase):
         self.assertEqual(spinoff_data[0]['status'],  'executed')
         self.assertEqual(spinoff_data[0]['ratio'],  1.259958)
 
+    @mock.patch('pycharts.base.urlopen', mock_urlopen)
+    def test_successful_series_request_with_aggregation(self):
+        series_rsp = self.client.get_series(['AAPL'], ['price'], aggregate_function='max')
+        status = series_rsp['meta']['status']
+        security_response_data = series_rsp['response']['AAPL']
+        securty_query_status = security_response_data['meta']['status']
+        calculation_response_data = security_response_data['results']['price']
+        calculation_query_status = calculation_response_data['meta']['status']
+        calculation_query_data = calculation_response_data['data']
+        # assertions
+        self.assertEqual(status, 'ok')
+        self.assertEqual(securty_query_status, 'ok')
+        self.assertEqual(calculation_query_status, 'ok')
+        expected_data = [['2016-09-12', 99999.00]]
+        self.assertEqual(calculation_query_data, expected_data)
 
 if __name__ == '__main__':
     unittest.main()
