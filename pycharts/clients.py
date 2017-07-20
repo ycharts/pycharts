@@ -79,5 +79,7 @@ class IndicatorClient(BaseSecurityClient):
     def get_points(self, security_symbols, query_date=None):
         return super(IndicatorClient, self).get_points(security_symbols, None, query_date)
 
-    def get_series(self, security_symbols, query_start_date=None, query_end_date=None):
-        return super(IndicatorClient, self).get_series(security_symbols, None, query_start_date, query_end_date)
+    def get_series(self, security_symbols, query_start_date=None, query_end_date=None,
+        resample_frequency=None, resample_function=None, fill_method=None, aggregate_function=None):
+        return super(IndicatorClient, self).get_series(security_symbols, None, query_start_date, query_end_date,
+            resample_frequency, resample_function, fill_method, aggregate_function)

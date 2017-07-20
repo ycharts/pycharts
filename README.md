@@ -97,6 +97,10 @@ series_rsp = mutual_fund_client.get_series('M:FCNTX', ['net_asset_value'],
     
 series_rsp = indicator_client.get_series('I:USICUI',
     query_start_date=past , query_end_date=now)
+
+# example resampling request
+series_rsp = company_client.get_series(['AAPL', 'MSFT'], ['price'], query_start_date=past, 
+    query_end_date=now, resampling_frequency='daily', resampling_function='mean')
 ```
 
 ### Info Queries
