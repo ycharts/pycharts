@@ -5,7 +5,7 @@ class CompanyClient(BaseSecurityClient):
     
     SECURITY_TYPE_PATH = 'companies'
     VALID_SECURITY_FILTERS = ['benchmark_index', 'exchange', 'hq_region', 'incorporation_region',
-    	'industry', 'naics_industry', 'naics_sector', 'sector']
+    	'industry',  'is_lp', 'is_reit', 'is_shell', 'naics_industry', 'naics_sector', 'sector']
 
     def get_dividends(self, security_symbols, ex_start_date=None, ex_end_date=None, dividend_type=None):
         security_symbols = self._str_or_list(security_symbols)
