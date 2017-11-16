@@ -155,6 +155,7 @@ class BaseSecurityClient(object):
             encoded_params = urlencode(params)
             url = '{0}?{1}'.format(url, encoded_params)
 
+        url = url.replace(' ', '')
         req = Request(url, headers=self.header)
         response = self._parse_response(req)
         
@@ -168,6 +169,10 @@ class BaseSecurityClient(object):
                 raise exceptions.PyChartsRequestUrlNotFoundException()
             elif http_error.code == 401:
                 raise exceptions.PyChartsRequestUnauthorizedException()
+            elif http_error.code == 400:
+                raise exceptions.PyChartsRequestException()
+            else:
+                raise
 
         parsed_rsp = json.loads(response)
         # raise any payload level errors
