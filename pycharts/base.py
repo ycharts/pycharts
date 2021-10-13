@@ -12,7 +12,7 @@ class BaseSecurityClient(object):
     """
 
     API_VERSION = 'v3'
-    BASE_URL = 'https://ycharts.com/api'
+    BASE_URL = 'https://api.ycharts.com/'
     SECURITY_TYPE_PATH = None
     VALID_SECURITY_FILTERS = None
 
