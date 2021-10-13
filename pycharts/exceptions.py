@@ -28,3 +28,9 @@ class PyChartsRequestTooLongException(PyChartsRequestException):
     def __init__(self, error_message=None):
         self.error_message = error_message
         self.error_code = 414
+
+class PyChartsRequestForbiddenException(PyChartsRequestException):
+
+    def __init__(self, error_message=None):
+        self.error_message = "The server refuses to authorize the request."
+        self.error_code = 403
