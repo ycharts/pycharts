@@ -156,6 +156,8 @@ class BaseSecurityClient(object):
             else:
                 raise
 
+        if response.status_code == 403:
+            raise exceptions.PyChartsRequestForbiddenException()
         parsed_rsp = response.json()
 
         # raise any payload level errors
