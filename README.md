@@ -3,7 +3,7 @@ Python client for the YCharts Market Data API.
 
 # Requirements
 
-* Python (2.7, 3.0, 3.2, 3.3, 3.4, 3.5)
+* Python ( 3.x )
 * Valid API key from YCharts.
 
 # Installation
