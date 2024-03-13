@@ -1,16 +1,8 @@
 import datetime
 import json
 from pycharts import exceptions
-try:
-    # Python 3
-    from urllib.parse import urlencode
-    from urllib.error import HTTPError
-    from urllib.request import Request, urlopen
-except ImportError:
-    # Python2
-    from urllib import urlencode
-    from urllib2 import HTTPError, Request, urlopen
 
+import requests
 
 class BaseSecurityClient(object):
     """
@@ -20,7 +12,7 @@ class BaseSecurityClient(object):
     """
 
     API_VERSION = 'v3'
-    BASE_URL = 'https://ycharts.com/api'
+    BASE_URL = 'https://api.ycharts.com/'
     SECURITY_TYPE_PATH = None
     VALID_SECURITY_FILTERS = None
 
@@ -151,20 +143,10 @@ class BaseSecurityClient(object):
     # Private Helper Methods
     def _get_data(self, url_path, params=None):
         url = '{0}/{1}/{2}'.format(self.BASE_URL, self.API_VERSION, url_path)
-        if params:
-            encoded_params = urlencode(params)
-            url = '{0}?{1}'.format(url, encoded_params)
 
-        url = url.replace(' ', '')
-        req = Request(url, headers=self.header)
-        response = self._parse_response(req)
-        
-        return response
-
-    def _parse_response(self, req):
         try:
-            response = urlopen(req).read().decode('utf-8')
-        except HTTPError as http_error:
+            response = requests.get(url, params=params, headers=self.header)
+        except requests.HTTPError as http_error:
             if http_error.code == 404:
                 raise exceptions.PyChartsRequestUrlNotFoundException()
             elif http_error.code == 401:
@@ -174,7 +156,10 @@ class BaseSecurityClient(object):
             else:
                 raise
 
-        parsed_rsp = json.loads(response)
+        if response.status_code == 403:
+            raise exceptions.PyChartsRequestForbiddenException()
+        parsed_rsp = response.json()
+
         # raise any payload level errors
         if parsed_rsp['meta']['status'] == 'error':
             error_code = parsed_rsp['meta']['error_code']
